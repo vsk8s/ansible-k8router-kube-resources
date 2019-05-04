@@ -1,0 +1,53 @@
+---
+- name: Deploy Cluster role
+  local_action:
+    module:  k8s
+    state: "{{ k8router_kube_resources_state }}"
+    kubeconfig: "{{ k8router_kube_resources_kubeconfig }}"
+    definition:
+      kind: ClusterRole
+      apiVersion: rbac.authorization.k8s.io/v1beta1
+      metadata:
+        name: k8router
+      rules:
+        - apiGroups: [""]
+          resources:
+            - namespaces
+          verbs:
+            - get
+        - apiGroups: [""]
+          resources:
+            - pods
+            - services
+          verbs:
+            - watch
+            - list
+            - get
+        - apiGroups: ["extensions"]
+          resources:
+            - ingresses
+          verbs:
+            - watch
+            - list
+            - get
+            - patch
+            - update
+
+- name: Deploy Cluster Role Binding
+  local_action:
+    module:  k8s
+    state: "{{ k8router_kube_resources_state }}"
+    kubeconfig: "{{ k8router_kube_resources_kubeconfig }}"
+    definition:
+      apiVersion: rbac.authorization.k8s.io/v1beta1
+      kind: ClusterRoleBinding
+      metadata:
+        name: k8router-node
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: k8router
+      subjects:
+      - kind: User
+        name: k8router
+        namespace: kube-system

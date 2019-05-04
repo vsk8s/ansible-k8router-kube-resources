@@ -1,0 +1,3 @@
+---
+k8router_kube_resources_kubeconfig: "~/.kube/config"
+k8router_kube_resources_state: "present"
